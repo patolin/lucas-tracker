@@ -1,34 +1,26 @@
 version: '3.8'
-services:
-  # db:
-  #   #image: jsurf/rpi-mariadb
-  #   image: mariadb
-  #   container_name: mysql-db
-  #   restart: always
-  #   environment:
-  #     TZ: America/New_York
-  #     MYSQL_DATABASE: 'my_db'
-  #     MYSQL_ROOT_PASSWORD: 'passw0rd'
-  #   ports:
-  #     - '3306:3306'
-  #   expose:
-  #     - '3306'
-  #   volumes:
-  #     - ./mysql_data:/var/lib/mysql
 
+services:
   backend:
     build:
       context: ./backend
     container_name: backend
+    volumes:
+      - ./backend/app:/app  # Mount local backend directory
     ports:
       - "8000:8000"
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   frontend:
     build:
       context: ./frontend
     container_name: frontend
+    volumes:
+      - ./frontend/app:/app  # Mount local frontend directory
+      - /app/node_modules  # Prevent overwriting node_modules
     ports:
       - "3000:3000"
+    command: ["npm", "run", "dev"]
 
   reverse-proxy:
     image: nginx:latest

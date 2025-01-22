@@ -82,7 +82,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 # Login Endpoint
 
 
-@app.post("/login")
+@app.post("/api/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = get_user(db, form_data.username)
     if not user or not verify_password(form_data.password, user.password):
@@ -98,25 +98,25 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@app.get("/tipos-tareas")
+@app.get("/api/tipos-tareas")
 def get_tipos_tareas(db: Session = Depends(get_db)):
     tipos = db.query(TipoTarea).all()
     return tipos
 
 
-@app.get("/actividades")
+@app.get("/api/actividades")
 def get_actividades(db: Session = Depends(get_db)):
     tipos = db.query(Actividad).order_by(Actividad.nombre).all()
     return tipos
 
 
-@app.get("/tareas")
+@app.get("/api/tareas")
 def get_tareas(db: Session = Depends(get_db)):
     tareas = db.query(Tareas).order_by(desc(Tareas.fecha)).all()
     return tareas
 
 
-@app.post("/tareas")
+@app.post("/api/tareas")
 def post_tareas(payload: TareaRequest, db: Session = Depends(get_db)):
     tarea = Tareas(fecha=payload.fecha, id_actividad=payload.id_actividad,
                    cantidad=payload.cantidad, observaciones=payload.observaciones)

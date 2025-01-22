@@ -15,11 +15,11 @@ export default function Home() {
 
   // Fetch data from the API
   useEffect(() => {
-    fetch('http://192.168.68.200:8000/tareas')
+    fetch('/api/tareas')
       .then((response) => response.json())
       .then((data) => setData(data))
       .catch((error) => console.error('Error leyendo tareas:', error));
-    fetch('http://192.168.68.200:8000/actividades')
+    fetch('/api/actividades')
       .then((response) => response.json())
       .then((data) => {
         setActividades(data);
@@ -32,7 +32,7 @@ export default function Home() {
     e.preventDefault();
     try {
       console.log({ form });
-      const response = await fetch('http://192.168.68.200:8000/tareas', {
+      const response = await fetch('/api/tareas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

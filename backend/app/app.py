@@ -13,7 +13,8 @@ from passlib.context import CryptContext
 import argparse
 import subprocess
 from models import Usuarios, TipoTarea, Actividad, Tareas, init_db, get_db, SessionLocal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
+from typing import Optional
 
 from config import JWT_SECRET
 
@@ -46,8 +47,8 @@ app.add_middleware(
 class TareaRequest(BaseModel):
     fecha: str = Field(min_length=1)
     id_actividad: int = Field(gt=0)
-    cantidad: int = Field(gt=0)
-    observaciones: str = Field(min_length=1)
+    cantidad: Optional[float] = None
+    observaciones: Optional[str] = None
 
 # Utility Functions
 
@@ -119,7 +120,7 @@ def get_tareas(db: Session = Depends(get_db)):
 @app.post("/api/tareas")
 def post_tareas(payload: TareaRequest, db: Session = Depends(get_db)):
     tarea = Tareas(fecha=payload.fecha, id_actividad=payload.id_actividad,
-                   cantidad=payload.cantidad, observaciones=payload.observaciones)
+                   cantidad=payload.cantidad or None, observaciones=payload.observaciones or None)
     print(payload.__dict__)
     db.add(tarea)
     db.commit()

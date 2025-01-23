@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { Tabla } from '@/components/tabla';
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -130,32 +131,7 @@ export default function Home() {
       </form>
 
       <h2 className='text-2xl font-bold mb-4'>Qué hizo el Lucas?</h2>
-      <table className='table-auto w-full border-collapse border border-gray-300'>
-        <thead>
-          <tr className='bg-gray-100'>
-            <th className='border border-gray-300 px-4 py-2'>Fecha</th>
-            <th className='border border-gray-300 px-4 py-2'>Actividad</th>
-            <th className='border border-gray-300 px-4 py-2'>Cantidad</th>
-            <th className='border border-gray-300 px-4 py-2'>Observaciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td className='border border-gray-300 px-4 py-2'>{item.fecha}</td>
-              <td className='border border-gray-300 px-4 py-2'>
-                {objActividades[item.id_actividad]}
-              </td>
-              <td className='border border-gray-300 px-4 py-2'>
-                {item.cantidad}
-              </td>
-              <td className='border border-gray-300 px-4 py-2'>
-                {item.observaciones}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Tabla data={data} actividades={objActividades} />
     </div>
   );
 }

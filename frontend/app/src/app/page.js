@@ -8,7 +8,7 @@ export default function Home() {
   const [form, setForm] = useState({
     fecha: '',
     id_actividad: '',
-    cantidad: '',
+    cantidad: undefined,
     observaciones: '',
   });
   const [actividades, setActividades] = useState([]);
@@ -46,7 +46,7 @@ export default function Home() {
         setForm({
           fecha: '',
           id_actividad: '',
-          cantidad: '',
+          cantidad: undefined,
           observaciones: '',
         }); // Reset form
       } else {
@@ -110,7 +110,6 @@ export default function Home() {
             value={form.cantidad}
             onChange={handleChange}
             className='w-full border rounded px-3 py-2'
-            required
           />
         </div>
         <div>
@@ -120,7 +119,6 @@ export default function Home() {
             value={form.observaciones}
             onChange={handleChange}
             className='w-full border rounded px-3 py-2'
-            required
           />
         </div>
         <button

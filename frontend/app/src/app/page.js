@@ -43,7 +43,6 @@ export default function Home() {
       if (response.ok) {
         const newData = await response.json();
         setData((prevData) => [form, ...prevData]); // Add new data to the table
-        console.log('>>>', { data });
         setForm({
           fecha: '',
           id_actividad: '',

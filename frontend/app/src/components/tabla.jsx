@@ -16,7 +16,12 @@ export const Tabla = ({ data, actividades }) => {
       </thead>
       <tbody>
         {data.map((item, index) => (
-          <tr key={index}>
+          <tr
+            key={index}
+            className={`${item.id_tipo == 1 ? 'bg-amber-100' : ''}${
+              item.id_tipo == 2 ? 'bg-cyan-100' : ''
+            }${item.id_tipo == 3 ? 'bg-pink-100' : ''}`}
+          >
             <td className='border border-gray-300 px-4 py-2'>
               {String(item.fecha).split('T')[0]}
             </td>

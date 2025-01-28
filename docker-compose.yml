@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    restart: unless-stopped
     build:
       context: ./backend
       target: ${TARGET:-dev}  # Use the TARGET build argument (dev by default)
@@ -16,8 +17,8 @@ services:
     #  - "8000:8000"  # Optional, expose for local testing in dev only
 
   frontend:
+    restart: unless-stopped
     build:
-      no_cache: true
       context: ./frontend
       target: ${TARGET:-dev}  # Use the TARGET build argument (dev by default)
     container_name: frontend
@@ -32,6 +33,7 @@ services:
     #  - "3000:3000"  # Optional, expose for local testing in dev only
 
   reverse-proxy:
+    restart: unless-stopped
     image: nginx:latest
     container_name: reverse-proxy
     ports:

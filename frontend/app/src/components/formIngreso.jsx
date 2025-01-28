@@ -21,7 +21,6 @@ export const FormIngreso = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log({ form });
       const response = await fetch('/api/tareas', {
         method: 'POST',
         headers: {

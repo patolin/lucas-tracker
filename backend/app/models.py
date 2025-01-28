@@ -7,12 +7,14 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime, timedelta
 from config import DATABASE
 
 # SQLAlchemy Setup
-DATABASE_URL = f"mysql+pymysql://{DATABASE['USER']}:{DATABASE['PASS']}@{DATABASE['HOST']}/{DATABASE['BASE']}"
+DATABASE_URL = f"mysql+pymysql://{DATABASE['USER']}" + \
+    f":{DATABASE['PASS']}@{DATABASE['HOST']}/{DATABASE['BASE']}"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -55,6 +57,15 @@ class Tareas(Base):
     id_actividad = mapped_column(ForeignKey("lucas_actividades.id"))
     cantidad = Column(Float, default=0.0)
     observaciones = Column(String(100))
+    actividad = relationship("Actividad")
+
+    @hybrid_property
+    def id_tipo(self):
+        return self.actividad.id_tipo
+
+    @id_tipo.expression
+    def id_tipo(cls):
+        return Actividad.id_tipo
 
 
 def init_db():

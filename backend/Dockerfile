@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir pipenv
 FROM base AS dev
 COPY ./app/. /app/
 RUN apt update
-RUN apt install -y build-essential cargo
+#RUN apt install -y build-essential cargo
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
@@ -21,7 +21,7 @@ CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 FROM base AS prod
 COPY ./app/. /app/
 RUN apt update
-RUN apt install -y build-essential cargo
+#RUN apt install -y build-essential cargo
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

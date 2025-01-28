@@ -1,3 +1,5 @@
+from typing import Optional, List
+from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,6 +9,7 @@ from datetime import datetime
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import contains_eager
 from sqlalchemy import desc, func
 
 from jose import JWTError, jwt
@@ -44,6 +47,18 @@ app.add_middleware(
 )
 
 # pydantic models
+
+
+class TareaResponse(BaseModel):
+    id: int
+    fecha: datetime
+    id_actividad: int
+    cantidad: Optional[float]
+    observaciones: Optional[str]
+    id_tipo: Optional[int]  # <-- This field will come from Actividad
+
+    class Config:
+        orm_mode = True  # Enable ORM compatibility
 
 
 class TareaRequest(BaseModel):
@@ -117,35 +132,33 @@ def get_actividades(db: Session = Depends(get_db)):
 # def get_tareas(db: Session = Depends(get_db)):
 #     tareas = db.query(Tareas).order_by(desc(Tareas.fecha)).all()
 #     return tareas
-@app.get("/api/tareas")
+# Specify response model
+@app.get("/api/tareas", response_model=List[TareaResponse])
 def get_tareas(
     db: Session = Depends(get_db),
     fecha: Optional[str] = None,
     id_tipo: Optional[int] = None
 ):
+    # Join Tareas with Actividad and eager-load the relationship
+    query = db.query(Tareas).join(Actividad).options(
+        contains_eager(Tareas.actividad))
 
-    # Build the base query with a join to Actividad
-    query = db.query(Tareas).join(
-        Actividad, Tareas.id_actividad == Actividad.id)
-
-    # Filter by fecha if provided
+    # Date filtering
     if fecha:
         try:
-            # Parse the input date string to a date object
             fecha_date = datetime.strptime(fecha, "%Y-%m-%d").date()
-            # Compare the date part of Tareas.fecha
             query = query.filter(func.date(Tareas.fecha) == fecha_date)
         except ValueError:
-            # Handle invalid date format (FastAPI will return a 422 error)
             pass
 
-    # Filter by id_tipo if provided
+    # id_tipo filtering
     if id_tipo is not None:
         query = query.filter(Actividad.id_tipo == id_tipo)
 
-    # Order by fecha descending and execute the query
+    # Execute the query
     tareas = query.order_by(desc(Tareas.fecha)).all()
-    return tareas
+
+    return tareas  # FastAPI serializes this using TareaResponse
 
 
 @app.post("/api/tareas")
